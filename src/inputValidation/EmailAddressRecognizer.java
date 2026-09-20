@@ -101,6 +101,7 @@ public class EmailAddressRecognizer {
 		state = 0;							// This is the FSM state number
 		inputLine = input;					// Save the reference to the input line as a global
 		currentCharNdx = 0;					// The index of the current character
+		domainPartCounter = 0;				// Reset the domain length counter
 
 		// The Finite State Machines continues until the end of the input is reached or at some 
 		// state the current character does not match any valid transition to a next state
@@ -173,6 +174,7 @@ public class EmailAddressRecognizer {
 						(currentChar >= 'a' && currentChar <= 'z') ||	// Lower case
 						(currentChar >= '0' && currentChar <= '9')) {	// Digit
 					nextState = 3;
+					domainPartCounter = 1;	// reset domain length checker back to 1
 				} else {
 					running = false;
 				}
@@ -186,11 +188,19 @@ public class EmailAddressRecognizer {
 						(currentChar >= 'a' && currentChar <= 'z') ||	// Lower case
 						(currentChar >= '0' && currentChar <= '9')) {	// Digit
 					nextState = 3;
+					domainPartCounter++;	// Increment the domain length check
 				} else if (currentChar == '.') {	// Go to state where first TLD character is required
 					nextState = 5;
+					domainPartCounter = 0;	// Reset domain length check back to 0 after a dot
 				} else if (currentChar == '-') {
 					nextState = 4;
+					domainPartCounter++;	// Increment the domain length check
 				} else {
+					running = false;
+				}
+				
+				// Check domain length
+				if (domainPartCounter > 63) {
 					running = false;
 				}
 
@@ -203,10 +213,16 @@ public class EmailAddressRecognizer {
 						(currentChar >= 'a' && currentChar <= 'z') ||	// Lower case
 						(currentChar >= '0' && currentChar <= '9')) {	// Digit
 					nextState = 3;
+					domainPartCounter++;	// Increment the domain length check
 				} else {
 					running = false;
 				}
-
+				
+				// Check domain length
+				if (domainPartCounter > 63) {
+					running = false;
+				}
+				
 				// The execution of this state is finished
 				break;
 				
@@ -306,7 +322,9 @@ public class EmailAddressRecognizer {
 			// State 3 is not a final state (now requires a dot followed by a TLD)
 			
 			emailAddressIndexofError = currentCharNdx;
-			if (currentCharNdx >= input.length()) {
+			if (domainPartCounter > 63) {
+				emailAddressErrorMessage = "Domain name must be less than 63 characters.\n";
+			} else if (currentCharNdx >= input.length()) {
 				emailAddressErrorMessage = "Email domain must include a valid extension (e.g., .com, .edu).\n";
 			} else {
 				emailAddressErrorMessage = "Domain name may only contain alphanumeric characters, hyphens, or a period.\n";
