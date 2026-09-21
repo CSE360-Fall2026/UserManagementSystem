@@ -121,6 +121,9 @@ public class ViewUserLogin {
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
 		theUserLoginScene = new Scene(theRootPane, width, height);
+		theUserLoginScene.getStylesheets().add(
+			    getClass().getResource("/applicationMain/application.css").toExternalForm()
+			);
 		
 		// Populate the window with the title and other common widgets and set their static state
 		setupLabelUI(label_ApplicationTitle, "Arial", 32, width, Pos.CENTER, 0, 10);
@@ -143,6 +146,7 @@ public class ViewUserLogin {
 		// Set up the Log In button
 		setupButtonUI(button_Login, "Dialog", 18, 200, Pos.CENTER, 475, 180);
 		button_Login.setOnAction((_) -> {ControllerUserLogin.doLogin(theStage); });
+		button_Login.getStyleClass().add("primary-button");
 
 		alertUsernamePasswordError.setTitle("Invalid username/password!");
 		alertUsernamePasswordError.setHeaderText(null);
@@ -173,7 +177,7 @@ public class ViewUserLogin {
 				label_ApplicationTitle, 
 				label_OperationalStartTitle,
 				label_LogInInsrtuctions, label_AccountSetupInsrtuctions, text_Username,
-				button_Login, text_Password, text_Invitation, button_SetupAccount,
+				text_Password, button_Login, text_Invitation, button_SetupAccount,
 				button_Quit);
 	}
 

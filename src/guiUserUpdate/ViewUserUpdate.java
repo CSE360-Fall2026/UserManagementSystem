@@ -225,6 +225,9 @@ public class ViewUserUpdate {
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
 		theUserUpdateScene = new Scene(theRootPane, width, height);
+		theUserUpdateScene.getStylesheets().add(
+			    getClass().getResource("/applicationMain/application.css").toExternalForm()
+			);
 
 		// Initialize the pop-up dialogs to an empty text filed.
 		dialogUpdateFirstName = new TextInputDialog("");
@@ -541,9 +544,10 @@ public class ViewUserUpdate {
         
         // Set up the button to proceed to this user's home page
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 
-        		Pos.CENTER, width/2-150, 450);
+        		Pos.CENTER, width/2-150, 500);
         button_ProceedToUserHomePage.setOnAction((_) -> 
         	{ControllerUserUpdate.goToUserHomePage(theStage, theUser);});
+        button_ProceedToUserHomePage.getStyleClass().add("primary-button");
     	
         // Populate the Pane's list of children widgets
         // Removed "button_UpdatePreferredFirstName" - No longer setting a preferred name or display name
